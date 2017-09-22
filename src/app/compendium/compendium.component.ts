@@ -19,14 +19,24 @@ import { DemonListComponent } from './demon-list.component';
             <table class="app-sticky-table-header position-sticky">
                 <thead>
                     <tr>
-                        <th class="navbar" [style.width.%]="1" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-                            <a routerLink="/demons">Demon List</a>
+                        <th class="navbar"
+                            routerLink="/demons"
+                            routerLinkActive="active"
+                            [style.width.%]="1"
+                            [routerLinkActiveOptions]="{ exact: true }">
+                            Demon List
                         </th>
-                        <th class="navbar" [style.width.%]="1" routerLinkActive="active">
-                            <a routerLink="/skills">Skill List</a>
+                        <th class="navbar"
+                            routerLink="/skills"
+                            routerLinkActive="active"
+                            [style.width.%]="1">
+                            Skills List
                         </th>
-                        <th class="navbar" [style.width.%]="1" routerLinkActive="active">
-                            <a routerLink="/settings">Fusion Settings</a>
+                        <th class="navbar"
+                            routerLink="/settings"
+                            routerLinkActive="active"
+                            [style.width.%]="1">
+                            Fusion Settings
                         </th>
                     </tr>
                 </thead>

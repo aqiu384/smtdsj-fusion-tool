@@ -28,19 +28,27 @@ export class FusionTableRowComponent {
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <tr>
-            <th class="navbar" colspan="3" routerLinkActive="active">
-                <a routerLink="../reverse-fusions">Reverse Fusions</a>
+            <th class="navbar"
+                colspan="3"
+                routerLinkActive="active"
+                routerLink="../reverse-fusions"
+                [style.width.%]="50">
+                Reverse Fusions
             </th>
-            <th class="navbar" colspan="3" routerLinkActive="active">
-                <a routerLink="../forward-fusions">Forward Fusions</a>
+            <th class="navbar"
+                colspan="3"
+                routerLinkActive="active"
+                routerLink="../forward-fusions"
+                [style.width.%]="50">
+                Forward Fusions
             </th>
         </tr>
         <tr>
             <th *ngIf="laplaceOn" colspan="6">Laplace Subapp Enabled (Result Lvl +4)</th>
         </tr>
         <tr>
-            <th colspan="3" [style.width.%]="50">{{ headers.left }}</th>
-            <th colspan="3" [style.width.%]="50">{{ headers.right }}</th>
+            <th colspan="3">{{ headers.left }}</th>
+            <th colspan="3">{{ headers.right }}</th>
         </tr>
         <tr>
             <th class="sortable {{ sortDir(sortFuns[0]) }}" (click)="sortFun = sortFuns[0]">Race</th>

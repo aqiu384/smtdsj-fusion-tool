@@ -18,11 +18,19 @@ import { CurrentDemonService } from '../services/current-demon.service';
         <table>
             <thead>
                 <tr>
-                    <th colspan="2" [style.width.%]="50" class="navbar" routerLinkActive="active">
-                        <a routerLink="../reverse-fusions">Reverse Fusions</a>
+                    <th class="navbar"
+                        colspan="2"
+                        routerLinkActive="active"
+                        routerLink="../reverse-fusions"
+                        [style.width.%]="50">
+                        Reverse Fusions
                     </th>
-                    <th colspan="2" [style.width.%]="50" class="navbar" routerLinkActive="active">
-                        <a routerLink="../forward-fusions">Forward Fusions</a>
+                    <th class="navbar"
+                        colspan="2"
+                        routerLinkActive="active"
+                        routerLink="../forward-fusions"
+                        [style.width.%]="50">
+                        Forward Fusions
                     </th>
                 </tr>
                 <tr>
@@ -55,11 +63,17 @@ export class SpecialReverseFusionTableComponent {
         <table>
             <thead>
                 <tr>
-                    <th [style.width.%]="50" class="navbar" routerLinkActive="active">
-                        <a routerLink="../reverse-fusions">Reverse Fusions</a>
+                    <th class="navbar"
+                        routerLinkActive="active"
+                        routerLink="../reverse-fusions"
+                        [style.width.%]="50">
+                        Reverse Fusions
                     </th>
-                    <th [style.width.%]="50" class="navbar" routerLinkActive="active">
-                        <a routerLink="../forward-fusions">Forward Fusions</a>
+                    <th class="navbar"
+                        routerLinkActive="active"
+                        routerLink="../forward-fusions"
+                        [style.width.%]="50">
+                        Forward Fusions
                     </th>
                 </tr>
                 <tr>

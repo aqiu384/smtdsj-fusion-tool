@@ -21,7 +21,6 @@ table {
 .position-sticky {
   position: sticky;
   position: -webkit-sticky;
-  top: 10px;
 }
 
 thead tr, tfoot tr {
@@ -43,6 +42,7 @@ th.sortable:hover {
 
 /* Table Sort Directions */
 th.sortable {
+  cursor: pointer;
   white-space: nowrap;
   background-repeat: no-repeat;
   background-position: right;
@@ -107,14 +107,9 @@ ul.comma-list li {
 
 /* Navbar */
 th.navbar {
+  cursor: pointer;
   background-color: darkslategray;
   height: 2em;
-}
-
-th.navbar a {
-  display: block;
-  color: black;
-  text-decoration: none;
 }
 
 th.navbar.active, th.navbar:hover {
