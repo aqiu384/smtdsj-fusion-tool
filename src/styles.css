@@ -1,1 +1,120 @@
-/* You can add global styles to this file, and also import other style files */
+/* Demon Compendium */
+body {
+  background-color: black;
+  color: white;
+  width: 100%;
+  margin: 0;
+}
+
+a {
+  color: white;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: hidden;
+  border-bottom: solid 2px transparent;
+}
+
+table.position-sticky {
+  position: sticky;
+  position: -webkit-sticky;
+}
+
+thead tr, tfoot tr {
+  background-color: steelblue;
+  color: black;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #222;
+}
+
+th, td {
+  border: solid 2px black;
+}
+
+th.sortable:hover {
+  background-color: lightsteelblue;
+}
+
+/* Table Sort Directions */
+th.sortable {
+  white-space: nowrap;
+  background-repeat: no-repeat;
+  background-position: right;
+}
+
+th.sortable {
+  background-image: url(data:image/gif;base64,R0lGODlhCwALAJEAAAAAAP///y9PT////yH5BAEAAAMALAAAAAALAAsAAAIUnC2nKLnT4or00PvyrQwrPzUZshQAOw==);
+}
+
+th.sortable.asc {
+  background-image: url(data:image/gif;base64,R0lGODlhCwALAJEAAAAAAP///y9PT////yH5BAEAAAMALAAAAAALAAsAAAIRnC2nKLnT4or00Puy3rx7VQAAOw==);
+}
+
+th.sortable.desc {
+  background-image: url(data:image/gif;base64,R0lGODlhCwALAJEAAAAAAP///y9PT////yH5BAEAAAMALAAAAAALAAsAAAIPnI+py+0/hJzz0IruwjsVADs=);
+}
+
+/* Element Icons */
+div.element-icon {
+  height: 12px;
+  background-size: 12px;
+  background-repeat: no-repeat;
+  background-position: center;
+  color: transparent;
+}
+
+div.element-icon.phy { background-image: url('/assets/images/elements/phy.png'); }
+div.element-icon.gun { background-image: url('/assets/images/elements/gun.png'); }
+div.element-icon.fir { background-image: url('/assets/images/elements/fir.png'); }
+div.element-icon.ice { background-image: url('/assets/images/elements/ice.png'); }
+div.element-icon.ele { background-image: url('/assets/images/elements/ele.png'); }
+div.element-icon.win { background-image: url('/assets/images/elements/win.png'); }
+div.element-icon.exp { background-image: url('/assets/images/elements/exp.png'); }
+div.element-icon.cur { background-image: url('/assets/images/elements/cur.png'); }
+div.element-icon.ail { background-image: url('/assets/images/elements/ail.png'); }
+div.element-icon.rec { background-image: url('/assets/images/elements/rec.png'); }
+div.element-icon.alm { background-image: url('/assets/images/elements/alm.png'); }
+div.element-icon.sup { background-image: url('/assets/images/elements/sup.png'); }
+div.element-icon.pas { background-image: url('/assets/images/elements/pas.png'); }
+div.element-icon.lif { background-image: url('/assets/images/elements/lif.png'); }
+div.element-icon.man { background-image: url('/assets/images/elements/man.png'); }
+div.element-icon.spe { background-image: url('/assets/images/elements/spe.png'); }
+div.element-icon.non { background-image: none }
+
+/* Resistances */
+td.resists.wk { color: red; }
+td.resists.no { color: transparent; }
+td.resists.st { color: lightseagreen; }
+td.resists.nu { color: lightgray; }
+td.resists.rf { color: cyan; }
+td.resists.dr { color: lime; }
+
+/* Comma-separated List */
+ul.comma-list {
+  padding: 0;
+  list-style: none;
+}
+
+ul.comma-list li {
+  display: inline;
+}
+
+/* Navbar */
+th.navbar {
+  background-color: darkslategray;
+}
+
+th.navbar a {
+  display: block;
+  color: black;
+  text-decoration: none;
+}
+
+th.navbar.active, th.navbar:hover {
+  background-color: steelblue;
+}
