@@ -102,12 +102,12 @@ export class SkillTableHeaderComponent extends SortedTableHeaderComponent<Skill>
     selector: 'app-skill-list',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <app-sticky-table-header>
+        <table class="app-sticky-table-header position-sticky">
             <tfoot #stickyHeader
                 class="app-skill-table-header sticky-header"
                 (sortFunChanged)="sort()">
             </tfoot>
-        </app-sticky-table-header>
+        </table>
         <table>
             <tfoot #hiddenHeader
                 class="app-skill-table-header"

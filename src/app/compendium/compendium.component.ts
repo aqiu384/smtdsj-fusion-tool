@@ -16,7 +16,7 @@ import { DemonListComponent } from './demon-list.component';
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <div class="demon-compendium" [ngStyle]="{ marginLeft: 'auto', marginRight: 'auto', width: '1000px' }">
-            <app-sticky-table-header [edges]="parentEdges | async" (edgesChanged)="nextEdges($event)">
+            <table class="app-sticky-table-header position-sticky">
                 <thead>
                     <tr>
                         <th class="navbar" [style.width.%]="1" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
@@ -30,7 +30,7 @@ import { DemonListComponent } from './demon-list.component';
                         </th>
                     </tr>
                 </thead>
-            </app-sticky-table-header>
+            </table>
             <router-outlet></router-outlet>
             <div [style.textAlign]="'center'">
                 <a href="https://www.youtube.com/watch?v=8eYf3OHqq9s">
@@ -43,12 +43,7 @@ import { DemonListComponent } from './demon-list.component';
 export class CompendiumComponent implements OnInit {
     parentEdges: Observable<PositionEdges>;
 
-    constructor(
-        private router: Router,
-        private edgesService: PositionEdgesService
-    ) {
-        this.parentEdges = edgesService.parentEdges;
-    }
+    constructor(private router: Router) { }
 
     ngOnInit() {
         this.router.events.subscribe(event => {
@@ -56,9 +51,5 @@ export class CompendiumComponent implements OnInit {
                 window.scrollTo(0, 0);
             }
         });
-    }
-
-    nextEdges(edges: PositionEdges) {
-        this.edgesService.nextEdges(edges);
     }
 }

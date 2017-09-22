@@ -18,9 +18,10 @@ table {
   border-bottom: solid 2px transparent;
 }
 
-table.position-sticky {
+.position-sticky {
   position: sticky;
   position: -webkit-sticky;
+  top: 10px;
 }
 
 thead tr, tfoot tr {
@@ -107,6 +108,7 @@ ul.comma-list li {
 /* Navbar */
 th.navbar {
   background-color: darkslategray;
+  height: 2em;
 }
 
 th.navbar a {

@@ -76,14 +76,14 @@ export class FusionTableHeaderComponent extends SortedTableHeaderComponent<Fusio
     providers: [ PositionEdgesService ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <app-sticky-table-header>
+        <table class="app-sticky-table-header position-sticky">
             <tfoot #stickyHeader
                 class="app-fusion-table-header sticky-header"
                 [headers]="headers"
                 [laplaceOn]="laplaceOn"
                 (sortFunChanged)="sort()">
             </tfoot>
-        </app-sticky-table-header>
+        </table>
         <table>
             <tfoot #hiddenHeader
                 class="app-fusion-table-header"

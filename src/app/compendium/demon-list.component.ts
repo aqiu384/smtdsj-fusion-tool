@@ -95,12 +95,12 @@ export class DemonTableHeaderComponent extends SortedTableHeaderComponent<Demon>
     selector: 'app-demon-list',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <app-sticky-table-header>
+        <table class="app-sticky-table-header position-sticky">
             <tfoot #stickyHeader
                 class="app-demon-table-header sticky-header"
                 (sortFunChanged)="sort()">
             </tfoot>
-        </app-sticky-table-header>
+        </table>
         <table>
             <tfoot #hiddenHeader
                 class="app-demon-table-header"
