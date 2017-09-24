@@ -2,11 +2,10 @@ import {
     Component,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
-    ElementRef,
     Input,
     OnInit,
-    OnDestroy,
-    Renderer2
+    AfterViewChecked,
+    OnDestroy
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Observable } from 'rxjs/Observable';
@@ -61,55 +60,37 @@ export class SkillTableRowComponent {
             <th colspan="2">How to Acquire</th>
         </tr>
         <tr>
-            <th class="sortable {{ sortDir(sortFuns[0]) }}" (click)="sortFun = sortFuns[0]">Element<span>--</span></th>
-            <th class="sortable {{ sortDir(sortFuns[1]) }}" (click)="sortFun = sortFuns[1]">Name</th>
-            <th class="sortable {{ sortDir(sortFuns[2]) }}" (click)="sortFun = sortFuns[2]">Cost<span>--</span></th>
-            <th class="sortable {{ sortDir(sortFuns[3]) }}" [style.width.px]="200" (click)="sortFun = sortFuns[3]">Effect</th>
-            <th class="sortable {{ sortDir(sortFuns[4]) }}" (click)="sortFun = sortFuns[4]">Power<span>--</span></th>
-            <th class="sortable {{ sortDir(sortFuns[5]) }}" (click)="sortFun = sortFuns[5]">Accuracy<span>--</span></th>
-            <th class="sortable {{ sortDir(sortFuns[6]) }}" (click)="sortFun = sortFuns[6]">Inherits<span>--</span></th>
-            <th class="sortable {{ sortDir(sortFuns[7]) }}" (click)="sortFun = sortFuns[7]">Rank<span>--</span></th>
-            <th class="sortable {{ sortDir(sortFuns[8]) }}" [style.width.px]="200" (click)="sortFun = sortFuns[8]">Learned By</th>
-            <th class="sortable {{ sortDir(sortFuns[9]) }}" [style.width.px]="200" (click)="sortFun = sortFuns[9]">D-source</th>
+            <th class="sortable {{ sortDirClass(1) }}" (click)="nextSortFunIndex(1)">Element<span>--</span></th>
+            <th class="sortable {{ sortDirClass(2) }}" (click)="nextSortFunIndex(2)">Name</th>
+            <th class="sortable {{ sortDirClass(3) }}" (click)="nextSortFunIndex(3)">Cost<span>--</span></th>
+            <th class="sortable {{ sortDirClass(4) }}" [style.width.px]="200" (click)="nextSortFunIndex(4)">Effect</th>
+            <th class="sortable {{ sortDirClass(5) }}" (click)="nextSortFunIndex(5)">Power<span>--</span></th>
+            <th class="sortable {{ sortDirClass(6) }}" (click)="nextSortFunIndex(6)">Accuracy<span>--</span></th>
+            <th class="sortable {{ sortDirClass(7) }}" (click)="nextSortFunIndex(7)">Inherits<span>--</span></th>
+            <th class="sortable {{ sortDirClass(8) }}" (click)="nextSortFunIndex(8)">Rank<span>--</span></th>
+            <th class="sortable {{ sortDirClass(9) }}" [style.width.px]="200" (click)="nextSortFunIndex(9)">Learned By</th>
+            <th class="sortable {{ sortDirClass(10) }}" [style.width.px]="200" (click)="nextSortFunIndex(10)">D-source</th>
         </tr>
     `,
     styles: [
         'span { visibility: hidden; }'
     ]
 })
-export class SkillTableHeaderComponent extends SortedTableHeaderComponent<Skill> {
-    static readonly SORT_FUNS: ((d1: Skill, d2: Skill) => number)[] = [
-        (d1, d2) => (SkillElementOrder[d1.element] - SkillElementOrder[d2.element]) * 10000 + d1.rank - d2.rank,
-        (d1, d2) => d1.name.localeCompare(d2.name),
-        (d1, d2) => d1.cost - d2.cost,
-        (d1, d2) => d1.effect.localeCompare(d2.effect),
-        (d1, d2) => d2.power - d1.power,
-        (d1, d2) => d2.accuracy - d1.accuracy,
-        (d1, d2) => InheritElementOrder[d1.inherit] - InheritElementOrder[d2.inherit],
-        (d1, d2) => d2.rank - d1.rank,
-        (d1, d2) => d2.learnedBy.length - d1.learnedBy.length,
-        (d1, d2) => d2.dsource.length - d1.dsource.length,
-    ];
-
-    sortFuns = SkillTableHeaderComponent.SORT_FUNS;
-
-    constructor(private elementRef: ElementRef, private renderer: Renderer2) {
-        super(elementRef, renderer, SkillTableHeaderComponent.SORT_FUNS[0]);
-    }
-}
+export class SkillTableHeaderComponent extends SortedTableHeaderComponent { }
 
 @Component({
     selector: 'app-skill-list',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <table class="app-sticky-table-header position-sticky">
-            <tfoot #stickyHeader
+        <table appPositionSticky>
+            <tfoot #stickyHeader appColumnWidths
                 class="app-skill-table-header sticky-header"
-                (sortFunChanged)="sort()">
+                [sortFunIndex]="sortFunIndex"
+                (sortFunIndexChanged)="sortFunIndex = $event">
             </tfoot>
         </table>
         <table>
-            <tfoot #hiddenHeader
+            <tfoot #hiddenHeader appColumnWidths
                 class="app-skill-table-header"
                 [style.visibility]="'collapse'">
             </tfoot>
@@ -122,7 +103,29 @@ export class SkillTableHeaderComponent extends SortedTableHeaderComponent<Skill>
         </table>
     `
 })
-export class SkillListComponent extends SortedTableComponent<Skill> { }
+export class SkillListComponent extends SortedTableComponent<Skill> implements AfterViewChecked {
+    static readonly SORT_FUNS: ((d1: Skill, d2: Skill) => number)[] = [
+        (d1, d2) => (SkillElementOrder[d1.element] - SkillElementOrder[d2.element]) * 10000 + d1.rank - d2.rank,
+        (d1, d2) => (SkillElementOrder[d1.element] - SkillElementOrder[d2.element]) * 10000 + d1.rank - d2.rank,
+        (d1, d2) => d1.name.localeCompare(d2.name),
+        (d1, d2) => d1.cost - d2.cost,
+        (d1, d2) => d1.effect.localeCompare(d2.effect),
+        (d1, d2) => d2.power - d1.power,
+        (d1, d2) => d2.accuracy - d1.accuracy,
+        (d1, d2) => InheritElementOrder[d1.inherit] - InheritElementOrder[d2.inherit],
+        (d1, d2) => d2.rank - d1.rank,
+        (d1, d2) => d2.learnedBy.length - d1.learnedBy.length,
+        (d1, d2) => d2.dsource.length - d1.dsource.length,
+    ];
+
+    ngAfterViewChecked() {
+        this.matchColWidths();
+    }
+
+    getSortFun(sortFunIndex: number): (a: Skill, b: Skill) => number {
+        return SkillListComponent.SORT_FUNS[sortFunIndex];
+    }
+}
 
 @Component({
     selector: 'app-skill-list-container',
@@ -139,7 +142,7 @@ export class SkillListContainerComponent implements OnInit, OnDestroy {
     constructor(
         private title: Title,
         private fusionDataService: FusionDataService,
-        private changeDetector: ChangeDetectorRef
+        private changeDetectorRef: ChangeDetectorRef
     ) { }
 
     ngOnInit() {
@@ -157,7 +160,7 @@ export class SkillListContainerComponent implements OnInit, OnDestroy {
     }
 
     onCompendiumUpdated(compendium: Compendium) {
-        this.changeDetector.markForCheck();
+        this.changeDetectorRef.markForCheck();
         this.skills = Observable.create(observer => {
             const skills = compendium.getAllSkills();
             observer.next(skills.slice(0, 50));

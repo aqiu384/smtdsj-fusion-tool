@@ -19,8 +19,8 @@ table {
 }
 
 .position-sticky {
-  position: sticky;
   position: -webkit-sticky;
+  position: sticky;
 }
 
 thead tr, tfoot tr {

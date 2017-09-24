@@ -16,7 +16,7 @@ import { DemonListComponent } from './demon-list.component';
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <div class="demon-compendium" [ngStyle]="{ marginLeft: 'auto', marginRight: 'auto', width: '1000px' }">
-            <table class="app-sticky-table-header position-sticky">
+            <table appPositionSticky>
                 <thead>
                     <tr>
                         <th class="navbar"

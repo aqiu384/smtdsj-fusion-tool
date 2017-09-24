@@ -1,4 +1,11 @@
-import { Component, ChangeDetectionStrategy, ElementRef, Input, Renderer2 } from '@angular/core';
+import {
+    Component,
+    ChangeDetectionStrategy,
+    Input,
+    OnInit,
+    AfterViewChecked,
+    OnDestroy
+} from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import { RaceOrder } from '../models/constants';
@@ -43,40 +50,26 @@ export class FusionTableRowComponent {
                 Forward Fusions
             </th>
         </tr>
-        <tr>
-            <th *ngIf="laplaceOn" colspan="6">Laplace Subapp Enabled (Result Lvl +4)</th>
+        <tr *ngIf="laplaceOn">
+            <th colspan="6">Laplace Subapp Enabled (Result Lvl +4)</th>
         </tr>
         <tr>
             <th colspan="3">{{ headers.left }}</th>
             <th colspan="3">{{ headers.right }}</th>
         </tr>
         <tr>
-            <th class="sortable {{ sortDir(sortFuns[0]) }}" (click)="sortFun = sortFuns[0]">Race</th>
-            <th class="sortable {{ sortDir(sortFuns[1]) }}" (click)="sortFun = sortFuns[1]">Lvl</th>
-            <th class="sortable {{ sortDir(sortFuns[2]) }}" (click)="sortFun = sortFuns[2]">Name</th>
-            <th class="sortable {{ sortDir(sortFuns[3]) }}" (click)="sortFun = sortFuns[3]">Race</th>
-            <th class="sortable {{ sortDir(sortFuns[4]) }}" (click)="sortFun = sortFuns[4]">Lvl</th>
-            <th class="sortable {{ sortDir(sortFuns[5]) }}" (click)="sortFun = sortFuns[5]">Name</th>
+            <th class="sortable {{ sortDirClass(1) }}" (click)="nextSortFunIndex(1)">Race</th>
+            <th class="sortable {{ sortDirClass(2) }}" (click)="nextSortFunIndex(2)">Lvl</th>
+            <th class="sortable {{ sortDirClass(3) }}" (click)="nextSortFunIndex(3)">Name</th>
+            <th class="sortable {{ sortDirClass(4) }}" (click)="nextSortFunIndex(4)">Race</th>
+            <th class="sortable {{ sortDirClass(5) }}" (click)="nextSortFunIndex(5)">Lvl</th>
+            <th class="sortable {{ sortDirClass(6) }}" (click)="nextSortFunIndex(6)">Name</th>
         </tr>
     `
 })
-export class FusionTableHeaderComponent extends SortedTableHeaderComponent<FusionRow> {
-    static readonly SORT_FUNS: ((f1: FusionRow, f2: FusionRow) => number)[] = [
-        (f1, f2) => (RaceOrder[f1.race1] - RaceOrder[f2.race1]) * 100 + f2.lvl1 - f1.lvl1,
-        (f1, f2) => f1.lvl1 - f2.lvl1,
-        (f1, f2) => f1.name1.localeCompare(f2.name1),
-        (f1, f2) => (RaceOrder[f1.race2] - RaceOrder[f2.race2]) * 100 + f2.lvl2 - f1.lvl2,
-        (f1, f2) => f1.lvl2 - f2.lvl2,
-        (f1, f2) => f1.name2.localeCompare(f2.name2)
-    ];
-
+export class FusionTableHeaderComponent extends SortedTableHeaderComponent {
     @Input() headers: FusionTableHeaders;
     @Input() laplaceOn: boolean;
-    sortFuns = FusionTableHeaderComponent.SORT_FUNS;
-
-    constructor(private elementRef: ElementRef, private renderer: Renderer2) {
-        super(elementRef, renderer, FusionTableHeaderComponent.SORT_FUNS[0]);
-    }
 }
 
 @Component({
@@ -84,16 +77,17 @@ export class FusionTableHeaderComponent extends SortedTableHeaderComponent<Fusio
     providers: [ PositionEdgesService ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <table class="app-sticky-table-header position-sticky">
-            <tfoot #stickyHeader
+        <table appPositionSticky>
+            <tfoot #stickyHeader appColumnWidths
                 class="app-fusion-table-header sticky-header"
                 [headers]="headers"
                 [laplaceOn]="laplaceOn"
-                (sortFunChanged)="sort()">
+                [sortFunIndex]="sortFunIndex"
+                (sortFunIndexChanged)="sortFunIndex = $event">
             </tfoot>
         </table>
         <table>
-            <tfoot #hiddenHeader
+            <tfoot #hiddenHeader appColumnWidths
                 class="app-fusion-table-header"
                 [style.visibility]="'collapse'"
                 [headers]="headers"
@@ -112,7 +106,24 @@ export class FusionTableHeaderComponent extends SortedTableHeaderComponent<Fusio
         </table>
     `
 })
-export class FusionTableComponent extends SortedTableComponent<FusionRow> {
+export class FusionTableComponent extends SortedTableComponent<FusionRow> implements AfterViewChecked {
+    static readonly SORT_FUNS: ((f1: FusionRow, f2: FusionRow) => number)[] = [
+        (f1, f2) => (RaceOrder[f1.race1] - RaceOrder[f2.race1]) * 100 + f2.lvl1 - f1.lvl1,
+        (f1, f2) => f1.lvl1 - f2.lvl1,
+        (f1, f2) => f1.name1.localeCompare(f2.name1),
+        (f1, f2) => (RaceOrder[f1.race2] - RaceOrder[f2.race2]) * 100 + f2.lvl2 - f1.lvl2,
+        (f1, f2) => f1.lvl2 - f2.lvl2,
+        (f1, f2) => f1.name2.localeCompare(f2.name2)
+    ];
+
     @Input() headers: FusionTableHeaders;
     @Input() laplaceOn: boolean;
+
+    ngAfterViewChecked() {
+        this.matchColWidths();
+    }
+
+    getSortFun(sortFunIndex: number): (a: FusionRow, b: FusionRow) => number {
+        return FusionTableComponent.SORT_FUNS[sortFunIndex];
+    }
 }

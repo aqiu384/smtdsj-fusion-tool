@@ -2,11 +2,10 @@ import {
     Component,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
-    ElementRef,
     Input,
     OnInit,
-    OnDestroy,
-    Renderer2
+    AfterViewChecked,
+    OnDestroy
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Observable } from 'rxjs/Observable';
@@ -52,57 +51,43 @@ export class DemonTableRowComponent {
             <th colspan="8">Resistances</th>
         </tr>
         <tr>
-            <th class="sortable {{ sortDir(sortFuns[0]) }}" (click)="sortFun = sortFuns[0]">Race</th>
-            <th class="sortable {{ sortDir(sortFuns[1]) }}" (click)="sortFun = sortFuns[1]">Lvl</th>
-            <th class="sortable {{ sortDir(sortFuns[2]) }}" (click)="sortFun = sortFuns[2]">Name</th>
+            <th class="sortable {{ sortDirClass(1) }}" (click)="nextSortFunIndex(1)">Race</th>
+            <th class="sortable {{ sortDirClass(2) }}" (click)="nextSortFunIndex(2)">Lvl</th>
+            <th class="sortable {{ sortDirClass(3) }}" (click)="nextSortFunIndex(3)">Name</th>
             <th *ngFor="let pair of statColIndices"
-                class="sortable {{ sortDir(sortFuns[pair.index]) }}"
-                (click)="sortFun = sortFuns[pair.index]">
+                class="sortable {{ sortDirClass(pair.index) }}"
+                (click)="nextSortFunIndex(pair.index)">
                 {{ pair.stat }}
             </th>
             <th *ngFor="let pair of elemColIndices"
-                class="sortable {{ sortDir(sortFuns[pair.index]) }}"
-                (click)="sortFun = sortFuns[pair.index]">
+                class="sortable {{ sortDirClass(pair.index) }}"
+                (click)="nextSortFunIndex(pair.index)">
                 <div class="element-icon {{ pair.element }}"></div>
             </th>
         </tr>
     `
 })
-export class DemonTableHeaderComponent extends SortedTableHeaderComponent<Demon> {
-    static readonly STAT_COL_INDICES = BaseStats.map((stat, i) => ({ stat, index: i + 3 }));
-    static readonly ELEM_COL_INDICES = ResistanceElements.map((element, i) => ({ element, index: i + 10 }));
-    static readonly SORT_FUNS: ((a: Demon, b: Demon) => number)[] = [
-        (d1, d2) => (RaceOrder[d1.race] - RaceOrder[d2.race]) * 100 + d2.lvl - d1.lvl,
-        (d1, d2) => d2.lvl - d1.lvl,
-        (d1, d2) => d1.name.localeCompare(d2.name)
-    ].concat(
-        BaseStats.map((stat, index) =>
-            (d1, d2) => d2.stats[index] - d1.stats[index]),
-        ResistanceElements.map((element, index) =>
-            (d1, d2) => ResistanceOrder[d2.resists[index]] - ResistanceOrder[d1.resists[index]])
-    );
+export class DemonTableHeaderComponent extends SortedTableHeaderComponent {
+    static readonly STAT_COL_INDICES = BaseStats.map((stat, i) => ({ stat, index: i + 4 }));
+    static readonly ELEM_COL_INDICES = ResistanceElements.map((element, i) => ({ element, index: i + 11 }));
 
     statColIndices = DemonTableHeaderComponent.STAT_COL_INDICES;
     elemColIndices = DemonTableHeaderComponent.ELEM_COL_INDICES;
-    sortFuns = DemonTableHeaderComponent.SORT_FUNS;
-
-    constructor(private elementRef: ElementRef, private renderer: Renderer2) {
-        super(elementRef, renderer, DemonTableHeaderComponent.SORT_FUNS[0]);
-    }
 }
 
 @Component({
     selector: 'app-demon-list',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <table class="app-sticky-table-header position-sticky">
-            <tfoot #stickyHeader
+        <table appPositionSticky>
+            <tfoot #stickyHeader appColumnWidths
                 class="app-demon-table-header sticky-header"
-                (sortFunChanged)="sort()">
+                [sortFunIndex]="sortFunIndex"
+                (sortFunIndexChanged)="sortFunIndex = $event">
             </tfoot>
         </table>
         <table>
-            <tfoot #hiddenHeader
+            <tfoot #hiddenHeader appColumnWidths
                 class="app-demon-table-header"
                 [style.visibility]="'collapse'">
             </tfoot>
@@ -117,7 +102,27 @@ export class DemonTableHeaderComponent extends SortedTableHeaderComponent<Demon>
         </table>
     `
 })
-export class DemonListComponent extends SortedTableComponent<Demon> { }
+export class DemonListComponent extends SortedTableComponent<Demon> implements AfterViewChecked {
+    static readonly SORT_FUNS: ((a: Demon, b: Demon) => number)[] = [
+        (d1, d2) => (RaceOrder[d1.race] - RaceOrder[d2.race]) * 100 + d2.lvl - d1.lvl,
+        (d1, d2) => (RaceOrder[d1.race] - RaceOrder[d2.race]) * 100 + d2.lvl - d1.lvl,
+        (d1, d2) => d2.lvl - d1.lvl,
+        (d1, d2) => d1.name.localeCompare(d2.name)
+    ].concat(
+        BaseStats.map((stat, index) =>
+            (d1, d2) => d2.stats[index] - d1.stats[index]),
+        ResistanceElements.map((element, index) =>
+            (d1, d2) => ResistanceOrder[d2.resists[index]] - ResistanceOrder[d1.resists[index]])
+    );
+
+    ngAfterViewChecked() {
+        this.matchColWidths();
+    }
+
+    getSortFun(sortFunIndex: number): (a: Demon, b: Demon) => number {
+        return DemonListComponent.SORT_FUNS[sortFunIndex];
+    }
+}
 
 @Component({
     selector: 'app-demon-list-container',
@@ -134,7 +139,7 @@ export class DemonListContainerComponent implements OnInit, OnDestroy {
     constructor(
         private title: Title,
         private fusionDataService: FusionDataService,
-        private changeDetector: ChangeDetectorRef
+        private changeDetectorRef: ChangeDetectorRef
     ) { }
 
     ngOnInit() {
@@ -152,7 +157,7 @@ export class DemonListContainerComponent implements OnInit, OnDestroy {
     }
 
     onCompendiumUpdated(compendium: Compendium) {
-        this.changeDetector.markForCheck();
+        this.changeDetectorRef.markForCheck();
         this.demons = Observable.create(observer => {
             const demons = compendium.getAllDemons();
             observer.next(demons.slice(0, 50));

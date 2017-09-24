@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Input, OnInit, OnDestroy, Type } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs/Subscription';
@@ -144,8 +144,7 @@ export class DemonEntryContainerComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private title: Title,
         private fusionDataService: FusionDataService,
-        private currentDemonService: CurrentDemonService,
-        private changeDetectorRef: ChangeDetectorRef
+        private currentDemonService: CurrentDemonService
     ) { }
 
     ngOnInit() {
@@ -176,7 +175,6 @@ export class DemonEntryContainerComponent implements OnInit, OnDestroy {
         if (this.compendium && this.name) {
             this.demon = this.compendium.getDemon(this.name);
             this.title.setTitle(`${this.name} - ${APP_TITLE}`);
-            this.changeDetectorRef.detectChanges();
         }
     }
 }

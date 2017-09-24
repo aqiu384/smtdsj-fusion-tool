@@ -1,99 +1,79 @@
 import {
-    AfterViewChecked,
-    ChangeDetectionStrategy,
     Input,
     Output,
     EventEmitter,
-    ElementRef,
-    Renderer2,
-    ViewChild,
+    ViewChild
 } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { ColumnWidthsDirective } from './column-widths.directive';
 
-import { PositionEdges } from './position-edges';
-import { PositionEdgesService } from './position-edges.service';
+export abstract class SortedTableHeaderComponent {
+    private sortAsc = true;
+    private sortAscIndex = 1;
 
-export class SortedTableHeaderComponent<TData> {
-    static readonly SortDirection = {
-        None: 'none',
-        Ascending: 'asc',
-        Descending: 'desc'
-    };
+    @Output() sortFunIndexChanged = new EventEmitter<number>();
 
-    @Input() borderWidth = 2;
-    @Input() defaultSortAsync = true;
-    @Output() sortFunChanged = new EventEmitter<(a: TData, b: TData) => number>();
-
-    private sortAscFun: (a: TData, b: TData) => number;
-    private sortAsc = this.defaultSortAsync;
-
-    constructor(
-        private elementRef2: ElementRef,
-        private renderer3: Renderer2,
-        defaultSortFun: (a: TData, b: TData) => number
-    ) {
-        this.sortAscFun = defaultSortFun;
+    get sortFunIndex(): number {
+        return (this.sortAsc ? 1 : -1) * this.sortAscIndex;
     }
 
-    sortDir(sortFun: (a: TData, b: TData) => number): string {
-        return sortFun !== this.sortAscFun ? SortedTableHeaderComponent.SortDirection.None :
-            this.sortAsc ? SortedTableHeaderComponent.SortDirection.Ascending :
-            SortedTableHeaderComponent.SortDirection.Descending;
+    @Input() set sortFunIndex(sortFunIndex: number) {
+        this.sortAsc = sortFunIndex > 0;
+        this.sortAscIndex = (this.sortAsc ? 1 : -1) * sortFunIndex;
     }
 
-    get colWidths(): number[] {
-        const colWidths = [];
-        const rows = this.elementRef2.nativeElement.children;
-
-        for (const column of rows[rows.length - 1].children) {
-            colWidths.push(column.clientWidth - this.borderWidth);
-        }
-
-        return colWidths;
+    sortDirClass(sortAscIndex: number): string {
+        return this.sortAscIndex !== sortAscIndex ? 'none' :
+            this.sortAsc ? 'asc' : 'desc';
     }
 
-    @Input() set colWidths(colWidths: number[]) {
-        const rows = this.elementRef2.nativeElement.children;
-        const cols = rows[rows.length - 1].children;
-
-        for (let i = 0; i < cols.length; i++) {
-            this.renderer3.setStyle(cols[i], 'width', `${colWidths[i]}px`);
-        }
-    }
-
-    get sortFun(): (a: TData, b: TData) => number {
-        return this.sortAsc ? this.sortAscFun : (a, b) => this.sortAscFun(b, a);
-    }
-
-    @Input() set sortFun(sortFun: (a: TData, b: TData) => number) {
-        this.sortAsc = this.sortAscFun === sortFun ? !this.sortAsc : true;
-        this.sortAscFun = sortFun;
-        this.sortFunChanged.emit(this.sortFun);
+    nextSortFunIndex(sortAscIndex: number) {
+        this.sortAsc = this.sortAscIndex !== sortAscIndex ? true : !this.sortAsc;
+        this.sortAscIndex = sortAscIndex;
+        this.sortFunIndexChanged.emit(this.sortFunIndex);
     }
 }
 
-export class SortedTableComponent<TData> implements AfterViewChecked {
-    @ViewChild('stickyHeader') stickyHeader: SortedTableHeaderComponent<TData>;
-    @ViewChild('hiddenHeader') hiddenHeader: SortedTableHeaderComponent<TData>;
+export abstract class SortedTableComponent<TData> {
+    @ViewChild('stickyHeader', { read: ColumnWidthsDirective }) stickyHeader: ColumnWidthsDirective;
+    @ViewChild('hiddenHeader', { read: ColumnWidthsDirective }) hiddenHeader: ColumnWidthsDirective;
 
-    private allRowData: TData[] = [];
+    private _rowData: TData[] = [];
+    private _sortFunIndex = 0;
 
-    ngAfterViewChecked() {
+    get rowData(): TData[] {
+        return this._rowData;
+    }
+
+    @Input() set rowData(rowData: TData[]) {
+        this._rowData = rowData;
+        this.sort();
+    }
+
+    get sortFunIndex(): number {
+        return this._sortFunIndex;
+    }
+
+    @Input() set sortFunIndex(sortFunIndex: number) {
+        this._sortFunIndex = sortFunIndex;
+        this.sort();
+    }
+
+    sort() {
+        if (this.sortFunIndex >= 0) {
+            this.rowData.sort(this.getSortFun(this.sortFunIndex));
+        } else if (this.sortFunIndex < 0) {
+            this.rowData.sort((a, b) => this.getSortFun(-1 * this.sortFunIndex)(b, a));
+        }
+
+        this.matchColWidths();
+    }
+
+    matchColWidths() {
         if (this.stickyHeader && this.hiddenHeader) {
             this.stickyHeader.colWidths = this.hiddenHeader.colWidths;
         }
     }
 
-    get rowData(): TData[] {
-        return this.allRowData;
-    }
-
-    @Input() set rowData(rowData: TData[]) {
-        this.allRowData = rowData;
-        this.sort();
-    }
-
-    sort() {
-        this.allRowData.sort(this.stickyHeader.sortFun);
-    }
+    abstract getSortFun(sortFunIndex: number): (a: TData, b: TData) => number;
 }

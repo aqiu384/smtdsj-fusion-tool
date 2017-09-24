@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule, Title } from '@angular/platform-browser';
 
 // Demons, Skills and Settings
-import { StickyTableHeaderComponent } from './sorted-table/sticky-table-header.component';
+import { PositionStickyDirective } from './sorted-table/position-sticky.directive';
+import { ColumnWidthsDirective } from './sorted-table/column-widths.directive';
 
 import { CompendiumRoutingModule } from './compendium-routing.module';
 import { CompendiumComponent } from './compendium.component';
@@ -61,7 +62,8 @@ import { PositionEdgesService } from './sorted-table/position-edges.service';
     ],
     declarations: [
         CompendiumComponent,
-        StickyTableHeaderComponent,
+        PositionStickyDirective,
+        ColumnWidthsDirective,
         // Demon List
         DemonListComponent,
         DemonListContainerComponent,
