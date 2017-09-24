@@ -109,6 +109,7 @@ export class FusionTableHeaderComponent extends SortedTableHeaderComponent {
 export class FusionTableComponent extends SortedTableComponent<FusionRow> implements AfterViewChecked {
     static readonly SORT_FUNS: ((f1: FusionRow, f2: FusionRow) => number)[] = [
         (f1, f2) => (RaceOrder[f1.race1] - RaceOrder[f2.race1]) * 100 + f2.lvl1 - f1.lvl1,
+		(f1, f2) => (RaceOrder[f1.race1] - RaceOrder[f2.race1]) * 100 + f2.lvl1 - f1.lvl1,
         (f1, f2) => f1.lvl1 - f2.lvl1,
         (f1, f2) => f1.name1.localeCompare(f2.name1),
         (f1, f2) => (RaceOrder[f1.race2] - RaceOrder[f2.race2]) * 100 + f2.lvl2 - f1.lvl2,
